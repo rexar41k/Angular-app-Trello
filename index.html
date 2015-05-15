@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+	<meta charset="UTF-8">
+	<title>Trello</title>
+
+	<link rel="stylesheet" href="css/main.css">
+</head>
+<body ng-cloak>
+	<header>
+		<div class="row">
+			<h1 class="app-name left">Trello</h1>
+		</div>
+	</header>
+
+	<section ng-controller="listsCtrl as listsCtrl">
+		<div>
+			<section ng-repeat="list in listsCtrl.lists"
+					 ng-controller="listCtrl as listCtrl">
+				<div>
+					<strong>{{list.listName}}</strong>
+					<button ng-click="listCtrl.removeList(list)">Delete list</button>
+				</div>
+				<div ng-repeat="card in listCtrl.getCards(list)" 
+					 ng-controller="cardCtrl as cardCtrl">
+					 <div ng-if="!cardCtrl.isEditing">
+						{{ card.description }}
+						<button ng-click="cardCtrl.editCard(card)">Edit card</button>
+						<button ng-click="cardCtrl.deleteCard(card)">Delete card</button>
+					</div>
+
+					<div ng-if="cardCtrl.isEditing">
+						<form ng-submit="cardCtrl.updateCard()">
+							<input type="text"
+								   close-editing
+								   is-editing='cardCtrl.isEditing'
+								   ng-model="cardCtrl.editingCard.description">
+							<select ng-model='cardCtrl.editingCard.list_id'
+									ng-change='cardCtrl.updateCard()'
+									ng-options="list.id as list.listName for list in listsCtrl.lists">
+							</select>
+						</form>
+					</div>
+				</div>
+			
+				
+
+				<section>
+					<form ng-submit="listCtrl.createCard(list)">
+						<input type="text" ng-model='listCtrl.cardDescription' placeholder="new card">
+					</form>
+				</section>
+			</section>
+
+			<section>
+				<form ng-submit="listsCtrl.addList()">
+					<input type="text" ng-model="listsCtrl.listName">
+				</form>
+			</section>
+		</div>
+	</section>
+
+	
+
+
+
+
+
+
+
+
+	<script src="js/lodash.min.js"></script>
+	<script src="js/angular.min.js"></script>
+
+	<script src="js/main.js"></script>
+	<script src="js/factories/listFactory.js"></script>
+	<script src="js/factories/cardFactory.js"></script>
+	<script src="js/controllers/listsCtrl.js"></script>
+	<script src="js/controllers/listCtrl.js"></script>
+	<script src="js/controllers/cardCtrl.js"></script>
+	<script src="js/directives/closeEditing.js"></script>
+</body>
+</html>
